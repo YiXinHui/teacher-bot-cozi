@@ -3,7 +3,7 @@
 // ===================================
 const COZE_CONFIG = {
     // 🔴 必填：在这里粘贴你的 扣子 API Token
-    token: '粘贴扣子Token在这里', 
+    token: 'cztei_lAzymf2hkdKheSt25KRq8xeehyN7EkkQfQVdedI2OzEdX7MvIZ1Hg41Nk2aTboY38', 
 };
 
 // ===================================
@@ -16,6 +16,6 @@ const STUDENTS_CONFIG = [
         name: '张三',
         teacherName: '林雨老师',
         // 🔴 必填：在这里粘贴扣子的 Bot ID
-        botId: '粘贴BotID在这里'
+        botId: '7585150421019852842'
     }
 ];
