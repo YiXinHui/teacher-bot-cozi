@@ -3,7 +3,7 @@
 // ===================================
 const COZE_CONFIG = {
     // 🔴 必填：在这里粘贴你的 扣子 API Token
-    token: 'cztei_lAzymf2hkdKheSt25KRq8xeehyN7EkkQfQVdedI2OzEdX7MvIZ1Hg41Nk2aTboY38', 
+    token: 'pat_TKPDH03KSYWTGmpng5vib4Z2MmQFVG8p5FiK5YykQ0ZiISpSTlcOdGbEiRr0aNFH', 
 };
 
 // ===================================
