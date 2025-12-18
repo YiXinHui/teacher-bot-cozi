@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林雨老师微信成交AI教练 (扣子版)</title>
+    <title>林雨老师微信成交AI教练 (扣子记忆版)</title>
     <style>
-        /* 样式保持不变，省略以节省篇幅，直接用之前的即可 */
+        /* 样式保持不变 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(135deg, #0052D9 0%, #366EF4 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; overflow: hidden; height: 80vh; max-height: 700px; display: flex; flex-direction: column; }
@@ -61,7 +61,7 @@
             <div id="messages" class="chat-messages">
                 <div class="message">
                     <div class="avatar">🤖</div>
-                    <div class="message-content">你好！我是扣子版智能助教，请问有什么可以帮你？</div>
+                    <div class="message-content">你好！我是你的专属智能助教，请问有什么可以帮你？</div>
                 </div>
             </div>
             <div class="input-area">
@@ -74,6 +74,8 @@
     <script src="config.js"></script>
     <script>
         let currentUser = null;
+        // 🌟 新增：用来存储当前的房间号
+        let currentConversationId = null;
 
         function login() {
             const phone = document.getElementById('phone').value.trim();
@@ -86,6 +88,8 @@
                 document.getElementById('chatPage').style.display = 'flex';
                 document.getElementById('teacherNameDisplay').innerText = user.teacherName;
                 document.getElementById('errorMsg').style.display = 'none';
+                // 每次登录重置房间号，开启新对话
+                currentConversationId = null;
             } else {
                 document.getElementById('errorMsg').style.display = 'block';
             }
@@ -103,15 +107,16 @@
             const loadingId = addMessage('ai', '思考中...', true);
 
             try {
-                // 🔴 核心变化：发送给 /api/coze
                 const response = await fetch('/api/coze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         token: COZE_CONFIG.token,
-                        botId: currentUser.botId, // 这里用 botId
+                        botId: currentUser.botId,
                         message: text,
-                        userId: currentUser.phone // 用手机号当用户ID
+                        userId: currentUser.phone,
+                        // 🌟 把房间号传给后端
+                        conversationId: currentConversationId
                     })
                 });
 
@@ -119,6 +124,11 @@
                 removeMessage(loadingId);
 
                 if (data.success) {
+                    // 🌟 更新房间号，下次聊天就能接上了！
+                    if (data.conversationId) {
+                        currentConversationId = data.conversationId;
+                        console.log("当前房间号:", currentConversationId);
+                    }
                     addMessage('ai', data.reply);
                 } else {
                     addMessage('ai', `服务错误: ${data.error}`);
@@ -126,11 +136,8 @@
 
             } catch (e) {
                 removeMessage(loadingId);
-                let errorText = '连接失败';
-                if (e.message.includes('404')) errorText = '找不到 api/coze.js 文件';
-                else if (e.message.includes('500')) errorText = '扣子响应超时或配置错误';
-                else errorText = e.message;
-                addMessage('ai', errorText);
+                addMessage('ai', '连接失败，请检查网络');
+                console.error(e);
             }
         }
 
